@@ -43,7 +43,9 @@ class Processors:
         output = {}
         for pairs in data.split('&'):
             parts = pairs.split('=')
-            output[parts[0]] = parts[1]
+            key = re.sub('[+]', ' ', parts[0])
+            value = re.sub('[+]', ' ', parts[1])
+            output[key] = value
         return output
 
     def post_task(self, data):
@@ -89,6 +91,7 @@ class Processors:
             conn.cursor().execute(
                 "insert into STATUSES (STATUS_ID, STATUS_NAME, DESCRIPTION) VALUES (" + fields['position'] + ", '" +
                 fields['stepname'] + "', '" + fields['description'] + "');")
+            print(fields)
             conn.commit()
             conn.close()
 
