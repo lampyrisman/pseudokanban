@@ -1,0 +1,94 @@
+<HTML xmlns="http://www.w3.org/1999/html">
+<style>
+    table {
+        border: 1px solid black;
+        width: 100%;
+        padding: 5px;
+    }
+    table tr {
+        padding: 5px;
+    }
+    table tr td {
+        padding: 10px;
+        text-align: center;
+        vertical-align: top;
+    }
+    table tr th {
+        border: 1px solid blue;
+        border-radius: 10px;
+    }
+    .push {
+        text-align: left;
+        padding-left: 50px;
+        display: table-cell;
+        vertical-align: top;
+
+    }
+    .header {
+        text-align: left;
+        margin: 10px;
+        height: 100px;
+        vertical-align: middle;
+        margin: 20px 50px 20px 50px;
+    }
+    .tasks {
+        text-align: center;
+        margin: 50px;
+    }
+    .task {
+        border: 1px solid green;
+        border-radius: 10px;
+        margin: 5px;
+    }
+    .logo {
+        width: 100px;
+        height: 100px;
+        display: table-cell;
+     }
+     .footer {
+     margin: 50px;
+     text-align: center;
+     }
+
+</style>
+    <body>
+        <div class="header">
+            <div class="logo"><img class="logo" src="/static/img/logo.png"><br>WORKFLOW</div>
+                    <div class="push">
+            <form name="add task" method="post" action="/post/add">
+                <input type="text" size="30" placeholder="input ticket id" name="ticketid">
+                <input type="submit" name="Send" value="Add"><br>
+                <input type="text" size="30" placeholder="input description" name="description">
+                <input type="reset" name="Reset" value="Reset">
+            </form>
+        </div>
+        </div>
+    <div class="tasks">
+        <table>
+            <tr>
+                {% for field in caps %}
+                <th>{{ field[1] }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for dfield in data %}
+                <td>
+                    {% for task in dfield %}
+                    <div class="task" title="{{ task[3] }}">
+                        <form name="task" method="post" action="/post/move">
+                            <div style="float:left"><input type="submit" name="move" value="L"></div>
+                            <input type="hidden" name="taskid" value="{{ task[0] }}">
+                            <input type="hidden" name="position" value="{{ task[2] }}">
+                            {{ task[1] }}
+                            <div style="float: right"><input type="submit" name="move" value="R" ></div>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </td>
+                {% endfor %}
+            </tr>
+        </table>
+    </div>
+    {% include 'footer.html' %}
+    </body>
+</HTML>
