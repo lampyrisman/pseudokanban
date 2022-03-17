@@ -14,7 +14,8 @@ class Processors:
         data = []
         for status in caps:
             data.append(conn.execute(
-                "select id, task, status, description from tasks where status=" + str(status[0]) + " order by id desc;").fetchall())
+                "select id, task, status, description from tasks where status=" + str(
+                    status[0]) + " order by id desc;").fetchall())
         file_loader = FileSystemLoader('pages')
         env = Environment(loader=file_loader)
         template = env.get_template('main.html')
@@ -62,17 +63,47 @@ class Processors:
         max_stat = conn.execute("select max(STATUS_ID) from statuses;").fetchone()
         new_pos = 1
         if fields['move'] == 'R':
-            new_pos = int(fields['position'])+1
+            new_pos = int(fields['position']) + 1
         if fields['move'] == 'L':
-            new_pos = int(fields['position'])-1
+            new_pos = int(fields['position']) - 1
         if new_pos < 1:
             new_pos = 1
         if new_pos > int(max_stat[0]):
             new_pos = int(max_stat[0])
-        conn.cursor().execute("update tasks set status="+str(new_pos)+" where id="+fields['taskid']+";")
+        conn.cursor().execute("update tasks set status=" + str(new_pos) + " where id=" + fields['taskid'] + ";")
         print(fields, max_stat[0], new_pos)
         conn.commit()
         conn.close()
+
+    def post_step(self, data):
+        fields = Processors.parse_form(self, data)
+        if fields['firing'] == 'on':
+            conn = sqlite3.connect('sqlite3.db')
+            ifexist = conn.execute("select STATUS_ID from statuses where status_id = " +
+                                   fields['position'] + ";").fetchone()
+            if ifexist is not None:
+                conn.cursor().execute(
+                    "update statuses set status_id=status_id+1 where status_id >=" + fields['position'] +
+                    ";")
+
+            conn.cursor().execute(
+                "insert into STATUSES (STATUS_ID, STATUS_NAME, DESCRIPTION) VALUES (" + fields['position'] + ", '" +
+                fields['stepname'] + "', '" + fields['description'] + "');")
+            conn.commit()
+            conn.close()
+
+    def post_step_del(self, data):
+        fields = Processors.parse_form(self, data)
+        if fields['firing'] == 'on':
+            conn = sqlite3.connect('sqlite3.db')
+            conn.cursor().execute(
+                "delete from statuses where status_id =" + fields['position'] +
+                ";")
+            conn.cursor().execute(
+                "update statuses set status_id=status_id-1 where status_id >" + fields['position'] +
+                ";")
+            conn.commit()
+            conn.close()
 
 
 class Server(BaseHTTPRequestHandler):

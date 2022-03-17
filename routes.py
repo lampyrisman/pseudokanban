@@ -9,6 +9,12 @@ routes = {
         {
             "target": "post_move"
         },
+    "/post/step": {
+        "target": "post_step"
+    },
+    "/post/step_del": {
+        "target": "post_step_del"
+    }
 }
 
 statics = {

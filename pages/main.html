@@ -22,18 +22,17 @@
         padding-left: 50px;
         display: table-cell;
         vertical-align: top;
-
     }
     .header {
         text-align: left;
         margin: 10px;
-        height: 100px;
+        height: auto;
         vertical-align: middle;
-        margin: 20px 50px 20px 50px;
+        margin: 0px 50px 0px 50px;
     }
     .tasks {
         text-align: center;
-        margin: 50px;
+        margin: 20px 50px 0px 50px;
     }
     .task {
         border: 1px solid green;
@@ -54,7 +53,27 @@
     <body>
         <div class="header">
             <div class="logo"><img class="logo" src="/static/img/logo.png"><br>WORKFLOW</div>
-                    <div class="push">
+
+            <div class="push">
+                Add step<br>
+            <form name="add step" method="post" action="/post/step">
+                <input type="text" size="30" placeholder="input step name" name="stepname">
+                <input type="submit" name="Send" value="Add"><br>
+                <input type="text" size="30" placeholder="input description" name="description">
+                <input type="reset" name="Reset" value="Reset"><br>
+                <input type="number" name="position" size="2" min="1" max="20">
+                Step position (1-20)
+                <input type="checkbox" name="firing">apply
+            </form>
+                <form name="del step" method="post" action="/post/step_del">
+                    Delete step. Step position (0-20)<br>
+                    <input type="number" name="position" size="2" min="1" max="20">
+                    <input type="checkbox" name="firing">apply
+                    <input type="submit" name="Send" value="Del">
+            </form>
+        </div>
+            <div class="push">
+                Add task to step 1
             <form name="add task" method="post" action="/post/add">
                 <input type="text" size="30" placeholder="input ticket id" name="ticketid">
                 <input type="submit" name="Send" value="Add"><br>
@@ -67,7 +86,7 @@
         <table>
             <tr>
                 {% for field in caps %}
-                <th>{{ field[1] }}</th>
+                <th title="{{ field[2] }}">{{ field[0] }}-{{ field[1] }}</th>
                 {% endfor %}
             </tr>
             <tr>
